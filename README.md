@@ -1,250 +1,66 @@
-# Lead Gen Workshop — Setup Guide
+# Lead Gen Workshop
 
-This guide walks you through everything from scratch. No coding experience needed.
+AI-powered lead generation pipeline for finding and qualifying small business prospects.
 
----
+## What It Does
 
-## Step 1: Install Python
+1. **Find companies** — Searches Companies House (real UK registered companies) and Google
+2. **Qualify with AI** — Sends each lead to an AI model for scoring and analysis
+3. **Find decision makers** — Looks up real directors via Companies House + Google
 
-1. Go to **https://www.python.org/downloads/**
-2. Click the yellow **"Download Python 3.x.x"** button
-3. Run the installer
-4. **IMPORTANT:** Tick the box that says **"Add Python to PATH"** at the bottom of the first screen
-5. Click **Install Now**
-6. When it finishes, click **Close**
-
-### Check it worked
-
-Open a terminal:
-- **Windows:** Press `Win + R`, type `cmd`, press Enter
-- **Mac:** Press `Cmd + Space`, type `terminal`, press Enter
-
-Type this and press Enter:
+## Files
 
 ```
-python --version
+workshop/
+  config.py                    <- Edit this (API keys, search settings, prompts)
+  main.py                      <- Full pipeline: find → qualify → results
+  GUIDE.md                     <- Step-by-step setup guide (start here)
+  tools/
+    serper.py                  <- Google Search via Serper API
+    openrouter.py              <- AI model via OpenRouter API
+    companies_house.py         <- UK Companies House API
+  scripts/
+    find_icp_leads.py          <- Find businesses matching your ICP
+    find_poc.py                <- Find point of contact for a company
 ```
 
-You should see something like `Python 3.12.x`. If you get an error, restart your computer and try again.
+## Quick Start
 
-> **Mac users:** If `python` doesn't work, try `python3` instead. Use `python3` everywhere this guide says `python`.
+1. Install Python from https://www.python.org/downloads/ (tick "Add to PATH")
+2. Get API keys (see below)
+3. Paste keys into `config.py`
+4. Open a terminal in this folder
+5. Run `python main.py`
 
----
+See **GUIDE.md** for detailed step-by-step instructions.
 
-## Step 2: Get Your API Keys
+## API Keys
 
-You need two free API keys. Both take about 60 seconds to set up.
+| Service | Purpose | Required | Free? | Link |
+|---------|---------|----------|-------|------|
+| Serper | Google search | Yes | 2,500 free searches | https://serper.dev |
+| OpenRouter | AI qualification | Yes | Pay-as-you-go ($5 is plenty) | https://openrouter.ai |
+| Companies House | UK company data | No | Completely free | https://developer.company-information.service.gov.uk |
 
-### Serper (Google Search)
+## Scripts
 
-1. Go to **https://serper.dev**
-2. Click **Sign Up** and create an account
-3. You get **2,500 free searches** (more than enough)
-4. Once logged in, your API key is on the dashboard — copy it
+### `python main.py`
+Full pipeline — finds companies (Companies House + Google), qualifies each one with AI, prints results.
 
-### OpenRouter (AI Model)
+### `python scripts/find_icp_leads.py`
+Finds businesses matching your Ideal Customer Profile. Edit `ICP_INDUSTRIES`, `ICP_LOCATIONS`, and `ICP_SIGNALS` in `config.py`.
 
-1. Go to **https://openrouter.ai**
-2. Click **Sign Up** and create an account
-3. Go to **https://openrouter.ai/keys**
-4. Click **Create Key**, give it any name, click **Create**
-5. Copy the key (starts with `sk-or-...`)
-6. You will need to add a small amount of credit ($5 is plenty) — go to **https://openrouter.ai/credits**
+### `python scripts/find_poc.py`
+Finds the point of contact (directors, owners) for specific companies. Edit `POC_COMPANIES` in `config.py`.
 
----
+## Supported Industries (Companies House)
 
-## Step 3: Add Your API Keys
+The following industries have SIC codes mapped and work with Companies House search:
 
-1. Open the `config.py` file in any text editor (Notepad, VS Code, whatever you have)
-2. Find these two lines near the top:
+plumbers, electricians, estate agents, accountants, marketing agency, web design, builders, cleaners, hairdressers, restaurants, cafes, gyms, dentists, vets, landscapers, mechanics
 
-```python
-SERPER_API_KEY     = "YOUR_SERPER_API_KEY"
-OPENROUTER_API_KEY = "YOUR_OPENROUTER_API_KEY"
-```
+For other industries, the pipeline falls back to Google search.
 
-3. Replace the placeholder text with your real keys. For example:
+## No Dependencies
 
-```python
-SERPER_API_KEY     = "a1b2c3d4e5f6..."
-OPENROUTER_API_KEY = "sk-or-v1-abc123..."
-```
-
-4. **Save the file** (Ctrl+S)
-
-> **Important:** Keep the quote marks around your keys. Don't delete them.
-
----
-
-## Step 4: Open a Terminal in the Workshop Folder
-
-### Windows
-
-1. Open File Explorer and navigate to the `workshop` folder
-2. Click in the address bar at the top, type `cmd`, press Enter
-3. A terminal window will open, already in the right folder
-
-### Mac
-
-1. Open Terminal
-2. Type `cd ` (with a space after it), then drag the `workshop` folder into the terminal window
-3. Press Enter
-
-### Check you're in the right place
-
-Type `dir` (Windows) or `ls` (Mac) and press Enter. You should see `config.py` and `main.py` in the list.
-
----
-
-## Step 5: Run the Pipeline
-
-Type this and press Enter:
-
-```
-python main.py
-```
-
-This will:
-1. Search Google for leads based on your queries in `config.py`
-2. Send each lead to AI for qualification
-3. Print the results
-
-You should see output like:
-
-```
-=======================================================
-  LEAD GEN WORKSHOP — AI Pipeline
-=======================================================
-
-[1/2] Searching for leads...
-
-  Searching: plumbers in Bristol
-  Searching: estate agents in Bath
-  ...
-
-[2/2] Qualifying 28 leads with AI...
-
-  Qualifying 1/28: Bristol Plumbing Services
-  Qualifying 2/28: ...
-```
-
----
-
-## Step 6: Try the Other Scripts
-
-### Find ICP Leads
-
-Searches for businesses that match your Ideal Customer Profile (industries + locations + signals):
-
-```
-python scripts/find_icp_leads.py
-```
-
-Edit these in `config.py` to change what it searches for:
-
-```python
-ICP_INDUSTRIES = ["plumbers", "electricians", "estate agents", "accountants"]
-ICP_LOCATIONS  = ["Bristol", "Bath", "Somerset"]
-ICP_SIGNALS    = ["owner", "family run", "independent", "established"]
-```
-
-### Find Point of Contact
-
-Searches for the owner/director/founder of specific companies:
-
-```
-python scripts/find_poc.py
-```
-
-Edit this in `config.py` to change which companies it looks up:
-
-```python
-POC_COMPANIES = [
-    "Apex Plumbing Bristol",
-    "Clifton Estate Agents",
-    "Smith & Co Accountants Bath",
-]
-```
-
----
-
-## Customising
-
-Everything you need to change is in **`config.py`**. You don't need to touch any other file.
-
-### Change what you search for
-
-Edit `LEAD_SEARCH_QUERIES` — add or remove search queries:
-
-```python
-LEAD_SEARCH_QUERIES = [
-    "plumbers in Bristol",
-    "estate agents in Bath",
-    "dentists in London",        # add your own
-]
-```
-
-### Change how AI qualifies leads
-
-Edit `LEAD_QUALIFY_PROMPT` — this is the instruction sent to the AI for each lead:
-
-```python
-LEAD_QUALIFY_PROMPT = """
-You are a lead qualification assistant. Analyse the following business...
-...
-"""
-```
-
-### Change the AI model
-
-Edit `OPENROUTER_MODEL` — browse models at https://openrouter.ai/models:
-
-```python
-OPENROUTER_MODEL = "minimax/minimax-m2.5"         # default (cheap + good)
-# OPENROUTER_MODEL = "google/gemini-flash-1.5"   # alternative
-```
-
-### Change search region
-
-```python
-SERPER_COUNTRY  = "gb"    # gb = UK, us = USA, au = Australia, etc.
-SERPER_LANGUAGE = "en"    # en = English
-```
-
----
-
-## Troubleshooting
-
-### "Python is not recognized"
-
-Python wasn't added to PATH during install. Either:
-- Reinstall Python and tick **"Add Python to PATH"**
-- Or find where Python was installed and use the full path, e.g. `C:\Users\YourName\AppData\Local\Programs\Python\Python312\python.exe main.py`
-
-### "Serper API key is not set" or "OpenRouter API key is not set"
-
-You haven't replaced the placeholder keys in `config.py`. Open it and paste your real keys.
-
-### "Serper API key is invalid"
-
-The key you pasted is wrong. Go back to https://serper.dev, copy it again, and paste it into `config.py`. Make sure there are no extra spaces.
-
-### "OpenRouter API key is invalid"
-
-Same — go to https://openrouter.ai/keys, copy your key again. Make sure it starts with `sk-or-`.
-
-### "Could not connect" / "Check your internet connection"
-
-Your internet is down, or a firewall is blocking the connection. Try opening https://google.com in your browser to check.
-
-### "Unexpected response from OpenRouter"
-
-The AI model might be temporarily unavailable. Wait a minute and try again. If it keeps happening, try a different model in `config.py`.
-
-### Nothing happens / terminal closes immediately
-
-You might be double-clicking the `.py` file instead of running it from a terminal. Follow Step 4 to open a terminal first, then run the command from there.
-
-### "No leads found"
-
-Your search queries didn't return results. Try broader queries in `config.py`, e.g. `"plumbers in London"` instead of a very specific one.
+Everything uses Python's built-in libraries. No `pip install` needed.

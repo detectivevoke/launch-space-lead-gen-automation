@@ -6,6 +6,10 @@
 # --- API KEYS -----------------------------------------------
 SERPER_API_KEY     = "YOUR_SERPER_API_KEY"       # https://serper.dev
 OPENROUTER_API_KEY = "YOUR_OPENROUTER_API_KEY"   # https://openrouter.ai
+CH_API_KEY         = "YOUR_CH_API_KEY"           # https://developer.company-information.service.gov.uk
+
+# --- COMPANIES HOUSE SETTINGS --------------------------------
+CH_API_URL         = "https://api.company-information.service.gov.uk"
 
 # --- SERPER SETTINGS ----------------------------------------
 SERPER_ENDPOINT    = "https://google.serper.dev/search"
